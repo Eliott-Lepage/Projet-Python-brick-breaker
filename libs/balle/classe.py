@@ -70,11 +70,15 @@ class Ball():
                 elif color == ('red',):
                     self.Game.canevas.itemconfig(i, fill='yellow', tag='yellow')
                 else:
-                    print('Erreur')
+                    print('Error')
 
                 if len(self.Game.brick.bricks) == 0:
-                    self.stop_game()
+                    self.continue_game()
 
-
-    def stop_game(self):
+    def continue_game(self):
+        counter = 0
+        counter += 1
         self.Game.leave_win_game()
+        return counter
+
+# Destroy the ball first !

@@ -1,6 +1,3 @@
-from tkinter import *
-
-
 class Brick:
 
     def __init__(self, Game):
@@ -13,8 +10,8 @@ class Brick:
         self.bricks = []
         self.Game = Game
 
-        #self.create_all_bricks()
-        #self.open_level()
+        # self.create_all_bricks()
+        # self.open_level()
         self.open_level_up()
 
     def create_all_bricks(self):
@@ -40,7 +37,7 @@ class Brick:
                 list_ball = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
                 list_of_lists = []
 
-                # Affichage principal
+                # Main display
                 for line in file:
                     stripped_line = line.strip()
                     line_list = stripped_line.split()
@@ -49,31 +46,31 @@ class Brick:
                 end = False
                 while end is not True:
 
-                    # Place la balle à l'index indiqué par l'utilisateur
-                    reponse = input("Quelle position attribuez vous à la balle ?  ")
-                    # Vérifie si l'utilisateur introduit un nombre entre 1 et 13
-                    if 13 >= int(reponse) > 0:
+                    # Place the ball at the index indicated by the user
+                    response = input("Quelle position attribuez vous à la balle ?  ")
+                    # Checks if the user enters a number between 1 and 13
+                    if 13 >= int(response) > 0:
                         end = False
                         touch = False
-                        list_ball[int(reponse) - 1] = "*"
+                        list_ball[int(response) - 1] = "*"
                         index_ball = list_ball.index("*")
-                        while end == False:
+                        while not end:
                             if str(list_of_lists[3][index_ball]) == "x":
                                 list_of_lists[3][index_ball] = "-"
                                 touch = True
 
                             if str(list_of_lists[2][index_ball]) == "x":
-                                if touch == False:
+                                if not touch:
                                     list_of_lists[2][index_ball] = "-"
                                     touch = True
 
                             if str(list_of_lists[1][index_ball]) == "x":
-                                if touch == False:
+                                if not touch:
                                     list_of_lists[1][index_ball] = "-"
                                     touch = True
 
                             if str(list_of_lists[0][index_ball]) == "x":
-                                if touch == False:
+                                if not touch:
                                     list_of_lists[0][index_ball] = "-"
                                     touch = True
                             end = True
@@ -84,7 +81,7 @@ class Brick:
                         print(' '.join(map(str, list_of_lists[3])))
 
                         print(' '.join(map(str, list_ball)))
-                        list_ball[int(reponse) - 1] = ' '
+                        list_ball[int(response) - 1] = ' '
                         print("\n")
 
                         for elem in list_of_lists:
@@ -93,53 +90,57 @@ class Brick:
                             else:
                                 end = True
                         if end:
-                            print("ENNDDDDD")
-
+                            print("END")
                     else:
-                        print("Veuillez introduire un nombre entre 1 et 13 compris !")
+                        print("Please enter a number between 1 and 13 inclusive!")
                         break
         except FileNotFoundError:
-            print('Fichier introuvable.')
+            print('File not found !')
         except IOError:
-            print('Erreur IO.')
+            print('Error IO.')
 
     def open_level_up(self):
         try:
-            with open('data/level_03.txt', "r") as file:
+            with open('data/level_01.txt', "r") as file:
                 res = {}
-                ligne_number = 0
+                line_number = 0
 
                 for line in file:
                     dt = line.rstrip()
                     dt_splitted = dt.split(" ")  # ['-', '-', '-', '1', '2', '3', '3', '3', '2', '1', '-', '-', '-']
 
-                    nom_ligne = str('line_' + str(ligne_number))
+                    name_line = str('line_' + str(line_number))
 
-                    if not nom_ligne in res:
-                        res[nom_ligne] = dt_splitted
-                    ligne_number += 1
+                    if name_line not in res:
+                        res[name_line] = dt_splitted
+                    line_number += 1
                 res_keys = list(res.keys())  # ['line_0', 'line_1', 'line_2', 'line_3']
                 for cle in res_keys:
                     for y in range(len(res[cle])):
                         if res[cle][y] == '1':
                             self.bricks.append(
                                 self.Game.canevas.create_rectangle(self.x, self.y, self.x + 45, self.y + 25,
-                                                                  fill='blue', tag='blue'))
+                                                                   fill='blue', tag='blue'))
                             self.x += 50
                         elif res[cle][y] == '2':
                             self.bricks.append(
                                 self.Game.canevas.create_rectangle(self.x, self.y, self.x + 45, self.y + 25,
-                                                                  fill='green', tag='green'))
+                                                                   fill='green', tag='green'))
                             self.x += 50
                         elif res[cle][y] == '3':
                             self.bricks.append(
                                 self.Game.canevas.create_rectangle(self.x, self.y, self.x + 45, self.y + 25,
-                                                                  fill='yellow', tag='yellow'))
+                                                                   fill='yellow', tag='yellow'))
                             self.x += 50
                         elif res[cle][y] == '4':
                             self.bricks.append(
                                 self.Game.canevas.create_rectangle(self.x, self.y, self.x + 45, self.y + 25,
-                                                                  fill='red', tag='red'))
+                                                                   fill='red', tag='red'))
+                            self.x += 50
+                        elif res[cle][y] == '5':
+                            self.bricks.append(
+                                self.Game.canevas.create_rectangle(self.x, self.y, self.x + 45, self.y + 25,
+                                                                   fill='#E077D5', tag='pink'))
                             self.x += 50
                         else:
                             self.x += 50
@@ -163,7 +164,7 @@ class Brick:
 
                     name_line = str('line_' + str(line_number))
 
-                    if not name_line in res:
+                    if name_line not in res:
                         res[name_line] = dt_splitted
                     line_number += 1
 
@@ -180,7 +181,6 @@ class Brick:
                             continue
                     self.y += 50
                     self.x = 50
-
 
         except FileNotFoundError:
             print('Fichier introuvable.')

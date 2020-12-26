@@ -1,7 +1,8 @@
 from tkinter import *
+import json
 
 
-class Ball():
+class Ball:
     def __init__(self, Game):
         self.dx = 2
         self.dy = -6
@@ -11,6 +12,9 @@ class Ball():
 
         self.create_label()
         self.create_ball()
+        self.score = 0
+        self.vies = 3
+        self.create_score()
 
         # empaquetage
         self.label.pack(expand=YES)
@@ -33,11 +37,59 @@ class Ball():
             self.animation()
             self.static = False
 
+    def create_score(self):
+        with open("data/save.txt", "r") as file:
+            dictionary = json.load(file)
+            # Get the name of the actual user
+            user = dictionary["Actual Username"]
+            # Get the higher score of the user
+
+            max_number = 0
+            for elem in dictionary[user]:
+                if elem > max_number:
+                    max_number = elem
+                else:
+                    continue
+
+        # Create the score in game
+        self.score_label = Label(self.Game.canevas, text="Score : " + str(self.score),
+                                 font=("Arial", 15),
+                                 bg='light blue', fg="black")
+        self.score_label.pack(side=LEFT)
+
+        # Create label best score
+        self.best_score_label = Label(self.Game.canevas, text="Username : " + user + "\n" + "Best Score : " +
+                                                              str(max_number),
+                                      font=("Arial", 15),
+                                      bg='light blue', fg="black")
+        self.best_score_label.pack(side=RIGHT)
+
+        # Create label lives
+        self.lives_label = Label(self.Game.canevas, text="Lives : " + str(self.vies),
+                                 font=("Arial", 15),
+                                 bg='light blue', fg="black")
+        self.lives_label.pack(side=BOTTOM)
+
+    def update_json_file(self):
+        with open("data/save.txt", "r+") as file:
+            dictionary = json.load(file)
+            user = dictionary["Actual Username"]
+            dictionary[user].append(self.score)
+
+        with open("data/save.txt", "w") as file:
+            json.dump(dictionary, file)
+
     def animation(self):
         if self.Game.canevas.coords(self.ball)[1] < 0:
             self.dy = -1 * self.dy
         if self.Game.canevas.coords(self.ball)[3] > 600:
+            self.update_json_file()
             self.Game.leave_loose_game()
+            """self.vies -= 1
+            self.lives_label.config(text="Lives : " + str(self.vies))
+            self.Game()
+            if self.vies == 0:
+                self.Game.leave_loose_game()"""
             return 0
         if self.Game.canevas.coords(self.ball)[0] < 0:
             self.dx = -1 * self.dx
@@ -45,12 +97,14 @@ class Ball():
             self.dx = -1 * self.dx
         self.Game.canevas.move(self.ball, self.dx, self.dy)
         self.Game.root.after(20, self.animation)
+
         # collision paddle
         if len(self.Game.canevas.find_overlapping(self.Game.canevas.coords(self.Game.paddle.paddle)[0],
                                                   self.Game.canevas.coords(self.Game.paddle.paddle)[1],
                                                   self.Game.canevas.coords(self.Game.paddle.paddle)[2],
                                                   self.Game.canevas.coords(self.Game.paddle.paddle)[3])) > 1:
             self.Game.ball.dy = -1 * self.Game.ball.dy
+
         # collision briques
         for i in self.Game.brick.bricks:
             if len(self.Game.canevas.find_overlapping(self.Game.canevas.coords(i)[0],
@@ -58,9 +112,19 @@ class Ball():
                                                       self.Game.canevas.coords(i)[2],
                                                       self.Game.canevas.coords(i)[3])) > 1:
                 self.Game.ball.dy = -1 * self.Game.ball.dy
-                # Change la couleur / solidité de la brique
+
+                # Score
+                self.score += 100
+                self.score_label.config(text="Score : " + str(self.score))
+
+                # Change the color and solidity of the brick
                 color = self.Game.canevas.gettags(i)
                 if color == ('blue',):
+                    self.Game.brick.bricks.remove(i)
+                    self.Game.canevas.delete(i)
+                elif color == ('pink',):
+                    self.vies += 1
+                    self.lives_label.config(text="Lives : " + str(self.vies))
                     self.Game.brick.bricks.remove(i)
                     self.Game.canevas.delete(i)
                 elif color == ('green',):
@@ -73,12 +137,9 @@ class Ball():
                     print('Error')
 
                 if len(self.Game.brick.bricks) == 0:
-                    self.continue_game()
+                    self.update_json_file()
 
     def continue_game(self):
-        counter = 0
-        counter += 1
         self.Game.leave_win_game()
-        return counter
 
 # Destroy the ball first !

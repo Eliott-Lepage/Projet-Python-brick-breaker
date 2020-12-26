@@ -2,27 +2,29 @@ from tkinter import *
 from libs.balle.classe import Ball
 from libs.paddle.classe import Paddle
 from libs.brique.classe import Brick
+import json
 
 
 class Window:
-
     def __init__(self):
         self.window = Tk()
         self.window.title("Brick Breaker")
         self.window.attributes("-fullscreen", True)
         self.window.iconbitmap("data/wall.ico")
-        self.window.config(background="#000000")
+        self.window.config(background="light blue")
 
         # initialization des composants
-        self.frame = Frame(self.window, bg='#000000')
-        self.littleFrame = Frame(self.frame, bg='#000000')
+        self.frame = Frame(self.window, bg='light blue')
+        self.littleFrame = Frame(self.frame, bg='light blue')
+        self.littleFrame_bis = LabelFrame(self.frame, bg='light blue', text="USER NAME")
 
         # creation des composants
         self.create_widgets()
 
         # empaquetage
-        self.littleFrame.pack(expand=YES, pady=100)
-        self.frame.pack(expand=YES)
+        self.littleFrame_bis.pack(expand=YES, pady=30)
+        self.littleFrame.pack(expand=YES, pady=50)
+        self.frame.pack(expand=YES, fill=BOTH, pady=200)
 
     def create_widgets(self):
         self.create_title()
@@ -31,27 +33,46 @@ class Window:
         self.create_quit_button()
 
     def create_title(self):
-        label_title = Label(self.frame, text="Brick Breaker", font=("Arial", 40), bg='#000000',
+        label_title = Label(self.frame, text="Brick Breaker", font=("Arial", 40), bg='light blue',
                             fg='white')
         label_title.pack()
 
     def create_subtitle(self):
-        label_subtitle = Label(self.frame, text="Projet Python 2020", font=("Arial", 25), bg='#000000',
+        label_subtitle = Label(self.frame, text="Projet Python 2020", font=("Arial", 25), bg='light blue',
                                fg='white')
         label_subtitle.pack()
 
     def create_play_button(self):
+        def my_click():
+            name = user_name.get(1.0, END).strip()
+            self.res = {}
+
+            with open("data/save.txt", "r") as file:
+                self.res = json.load(file)
+                self.res["Actual Username"] = str(name)
+                if '' in self.res:
+                    del self.res['']
+
+                if name not in self.res:
+                    self.res[str(name)] = [0]
+
+                with open("data/save.txt", "w") as file_write:
+                    json.dump(self.res, file_write)
+
+        user_name = Text(self.littleFrame_bis, width=30, height=1, font=("Helvetica", 16))
+        user_name.pack(pady=30, padx=30)
+
         play_button = Button(self.littleFrame, text="Jouer", font=("Arial", 25), bg='white', relief='groove',
-                             fg='#000000',
-                             command=self.play_game, width=8, activebackground='green',
+                             fg='light blue',
+                             command=lambda: [my_click(), self.play_game()], width=8, activebackground='green',
                              activeforeground='black')
         play_button.grid(column=0, row=0)
-        invisible_widget = Label(self.littleFrame, text=" ", bg="black")
+        invisible_widget = Label(self.littleFrame, text=" ", bg="light blue")
         invisible_widget.grid(column=1, row=0)
 
     def create_quit_button(self):
         quit_button = Button(self.littleFrame, text="Quitter", font=("Arial", 25), bg='white', relief='groove',
-                             fg='#000000',
+                             fg='light blue',
                              command=self.leave_page, width=8, activebackground='red',
                              activeforeground='black')
         quit_button.grid(column=2, row=0)
@@ -73,10 +94,12 @@ class Game:
         self.root.minsize(800, 600)
         self.root.iconbitmap("data/wall.ico")
         self.root.config(background="#000000")
-        self.canevas = Canvas(self.root, bg='lightblue', highlightthickness=0)
+        self.canevas = Canvas(self.root, bg='light blue', highlightthickness=0)
         self.paddle = Paddle(self)
         self.ball = Ball(self)
         self.brick = Brick(self)
+        self.window = Window
+        # self.user = Window.create_play_button
         self.end = False
         self.canevas.pack(fill=BOTH, expand=YES)
 

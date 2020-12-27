@@ -94,17 +94,16 @@ class Game:
         self.root.minsize(800, 600)
         self.root.iconbitmap("data/wall.ico")
         self.root.config(background="#000000")
+        self.score = 0
+        self.life = 3
         self.canevas = Canvas(self.root, bg='light blue', highlightthickness=0)
+        self.create_score()
         self.paddle = Paddle(self)
         self.ball = Ball(self)
         self.brick = Brick(self)
         self.window = Window
         self.end = False
         self.canevas.pack(fill=BOTH, expand=YES)
-        self.ball.score_label.grid(row=0, column=0, sticky='w')
-        self.ball.best_score_label.grid(row=2, column=0, sticky='e')
-        self.ball.user_name.grid(row=0, column=2, sticky='w')
-        self.ball.lives_label.grid(row=2, column=2, sticky='e')
 
     def leave_loose_game(self):
         self.end = True
@@ -115,6 +114,41 @@ class Game:
         self.end = True
         self.root.destroy()
         Victory()
+
+    def create_score(self):
+        with open("data/save.txt", "r") as file:
+            dictionary = json.load(file)
+            # Get the name of the actual user
+            user = dictionary["Actual Username"]
+            # Get the higher score of the user
+
+            max_number = 0
+            for elem in dictionary[user]:
+                if elem > max_number:
+                    max_number = elem
+                else:
+                    continue
+
+        # Create the score in game
+        self.score_label = self.canevas.create_text(0,0, text="Score : " + str(self.score), font=("Arial", 15), anchor=NW)
+
+        # Create label best score
+        self.best_score_label = self.canevas.create_text(800,0, text="Best Score : " + str(max_number), font=("Arial", 15), anchor=NE)
+
+        # Create label user
+        self.user_name = self.canevas.create_text(0,600, text="Username : " + user, font=("Arial", 15), anchor=SW)
+
+        # Create label lives
+        self.lives_label = self.canevas.create_text(800,600, text="Lives : " + str(self.life), font=("Arial", 15), anchor=SE)
+
+    def update_json_file(self):
+        with open("data/save.txt", "r+") as file:
+            dictionary = json.load(file)
+            user = dictionary["Actual Username"]
+            dictionary[user].append(self.score)
+
+        with open("data/save.txt", "w") as file:
+            json.dump(dictionary, file)
 
 
 class GameOver:

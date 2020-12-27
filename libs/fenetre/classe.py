@@ -99,9 +99,12 @@ class Game:
         self.ball = Ball(self)
         self.brick = Brick(self)
         self.window = Window
-        # self.user = Window.create_play_button
         self.end = False
         self.canevas.pack(fill=BOTH, expand=YES)
+        self.ball.score_label.grid(row=0, column=0, sticky='w')
+        self.ball.best_score_label.grid(row=2, column=0, sticky='e')
+        self.ball.user_name.grid(row=0, column=2, sticky='w')
+        self.ball.lives_label.grid(row=2, column=2, sticky='e')
 
     def leave_loose_game(self):
         self.end = True

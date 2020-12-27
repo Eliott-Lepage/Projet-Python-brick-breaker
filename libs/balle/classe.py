@@ -17,25 +17,25 @@ class Ball:
         self.create_score()
 
         # empaquetage
-        self.label.pack(expand=YES)
+        self.label.grid(row=1, column=1, pady=245)
 
     def create_label(self):
         self.label = Label(self.Game.canevas, text="Clique gauche pour lancer la balle", font=("Arial", 25),
                            bg='lightblue',
                            fg="black")
-
     def create_ball(self):
         self.ball = self.Game.canevas.create_oval(390, 480,
                                                   390 + 20, 480 + 20,
                                                   fill='red')
-
     def lancer_balle(self, event):
         if self.static == False:
             return 0
         else:
-            self.label.pack_forget()
+            self.label.config(text="")
             self.animation()
             self.static = False
+            self.Game.canevas.pack()
+
 
     def create_score(self):
         with open("data/save.txt", "r") as file:
@@ -54,21 +54,22 @@ class Ball:
         # Create the score in game
         self.score_label = Label(self.Game.canevas, text="Score : " + str(self.score),
                                  font=("Arial", 15),
-                                 bg='light blue', fg="black")
-        self.score_label.pack(side=LEFT)
+                                 bg=None, fg="black")
 
         # Create label best score
-        self.best_score_label = Label(self.Game.canevas, text="Username : " + user + "\n" + "Best Score : " +
-                                                              str(max_number),
+        self.best_score_label = Label(self.Game.canevas, text="Best Score : " + str(max_number),
                                       font=("Arial", 15),
-                                      bg='light blue', fg="black")
-        self.best_score_label.pack(side=RIGHT)
+                                      bg=None, fg="black")
+
+        # Create label user
+        self.user_name = Label(self.Game.canevas, text="Username : " + user,
+                                      font=("Arial", 15),
+                                      bg=None, fg="black")
 
         # Create label lives
         self.lives_label = Label(self.Game.canevas, text="Lives : " + str(self.vies),
                                  font=("Arial", 15),
-                                 bg='light blue', fg="black")
-        self.lives_label.pack(side=BOTTOM)
+                                 bg=None, fg="black")
 
     def update_json_file(self):
         with open("data/save.txt", "r+") as file:
@@ -84,13 +85,13 @@ class Ball:
             self.dy = -1 * self.dy
         if self.Game.canevas.coords(self.ball)[3] > 600:
             self.update_json_file()
-            self.Game.leave_loose_game()
-            """self.vies -= 1
+            self.static = True
+            self.vies -= 1
             self.lives_label.config(text="Lives : " + str(self.vies))
-            self.Game()
             if self.vies == 0:
-                self.Game.leave_loose_game()"""
+                self.Game.leave_loose_game()
             return 0
+
         if self.Game.canevas.coords(self.ball)[0] < 0:
             self.dx = -1 * self.dx
         if self.Game.canevas.coords(self.ball)[2] > 800:
@@ -133,8 +134,6 @@ class Ball:
                     self.Game.canevas.itemconfig(i, fill='green', tag='green')
                 elif color == ('red',):
                     self.Game.canevas.itemconfig(i, fill='yellow', tag='yellow')
-                else:
-                    print('Error')
 
                 if len(self.Game.brick.bricks) == 0:
                     self.update_json_file()

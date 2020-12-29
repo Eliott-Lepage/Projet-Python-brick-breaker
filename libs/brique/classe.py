@@ -1,6 +1,10 @@
+from os import listdir
+from os.path import isfile, join
+
+
 class Brick:
 
-    def __init__(self, Game):
+    def __init__(self, Game, id_level):
         self.x = 50
         self.y = 50
         self.number_max = 56
@@ -9,10 +13,19 @@ class Brick:
         self.colors = None
         self.bricks = []
         self.Game = Game
+        self.levels = []
+        self.id_level = id_level
 
         # self.create_all_bricks()
         # self.open_level()
+        self.take_levels()
         self.open_level_up()
+
+    def take_levels(self):
+        data_files = [f for f in listdir("data") if isfile(join("data", f))]
+        for i in data_files:
+            if i[:6] == "level_":
+                self.levels.append(i)
 
     def create_all_bricks(self):
         for x in range(self.number_max):
@@ -100,57 +113,60 @@ class Brick:
             print('Error IO.')
 
     def open_level_up(self):
-        try:
-            with open('data/level_01.txt', "r") as file:
-                res = {}
-                line_number = 0
+        for i in self.levels:
+            if i == self.levels[self.id_level]:
+                try:
+                    with open('data/' + i, "r") as file:
+                        res = {}
+                        line_number = 0
 
-                for line in file:
-                    dt = line.rstrip()
-                    dt_splitted = dt.split(" ")  # ['-', '-', '-', '1', '2', '3', '3', '3', '2', '1', '-', '-', '-']
+                        for line in file:
+                            dt = line.rstrip()
+                            dt_splitted = dt.split(
+                                " ")  # ['-', '-', '-', '1', '2', '3', '3', '3', '2', '1', '-', '-', '-']
 
-                    name_line = str('line_' + str(line_number))
+                            name_line = str('line_' + str(line_number))
 
-                    if name_line not in res:
-                        res[name_line] = dt_splitted
-                    line_number += 1
-                res_keys = list(res.keys())  # ['line_0', 'line_1', 'line_2', 'line_3']
-                for cle in res_keys:
-                    for y in range(len(res[cle])):
-                        if res[cle][y] == '1':
-                            self.bricks.append(
-                                self.Game.canevas.create_rectangle(self.x, self.y, self.x + 45, self.y + 25,
-                                                                   fill='blue', tag='blue'))
-                            self.x += 50
-                        elif res[cle][y] == '2':
-                            self.bricks.append(
-                                self.Game.canevas.create_rectangle(self.x, self.y, self.x + 45, self.y + 25,
-                                                                   fill='green', tag='green'))
-                            self.x += 50
-                        elif res[cle][y] == '3':
-                            self.bricks.append(
-                                self.Game.canevas.create_rectangle(self.x, self.y, self.x + 45, self.y + 25,
-                                                                   fill='yellow', tag='yellow'))
-                            self.x += 50
-                        elif res[cle][y] == '4':
-                            self.bricks.append(
-                                self.Game.canevas.create_rectangle(self.x, self.y, self.x + 45, self.y + 25,
-                                                                   fill='red', tag='red'))
-                            self.x += 50
-                        elif res[cle][y] == '5':
-                            self.bricks.append(
-                                self.Game.canevas.create_rectangle(self.x, self.y, self.x + 45, self.y + 25,
-                                                                   fill='#E077D5', tag='pink'))
-                            self.x += 50
-                        else:
-                            self.x += 50
-                            continue
+                            if name_line not in res:
+                                res[name_line] = dt_splitted
+                            line_number += 1
+                        res_keys = list(res.keys())  # ['line_0', 'line_1', 'line_2', 'line_3']
+                        for cle in res_keys:
+                            for y in range(len(res[cle])):
+                                if res[cle][y] == '1':
+                                    self.bricks.append(
+                                        self.Game.canevas.create_rectangle(self.x, self.y, self.x + 45, self.y + 25,
+                                                                           fill='blue', tag='blue'))
+                                    self.x += 50
+                                elif res[cle][y] == '2':
+                                    self.bricks.append(
+                                        self.Game.canevas.create_rectangle(self.x, self.y, self.x + 45, self.y + 25,
+                                                                           fill='green', tag='green'))
+                                    self.x += 50
+                                elif res[cle][y] == '3':
+                                    self.bricks.append(
+                                        self.Game.canevas.create_rectangle(self.x, self.y, self.x + 45, self.y + 25,
+                                                                           fill='yellow', tag='yellow'))
+                                    self.x += 50
+                                elif res[cle][y] == '4':
+                                    self.bricks.append(
+                                        self.Game.canevas.create_rectangle(self.x, self.y, self.x + 45, self.y + 25,
+                                                                           fill='red', tag='red'))
+                                    self.x += 50
+                                elif res[cle][y] == '5':
+                                    self.bricks.append(
+                                        self.Game.canevas.create_rectangle(self.x, self.y, self.x + 45, self.y + 25,
+                                                                           fill='#E077D5', tag='pink'))
+                                    self.x += 50
+                                else:
+                                    self.x += 50
+                                    continue
 
-                    self.y += 50
-                    self.x = 50
+                            self.y += 50
+                            self.x = 50
 
-        except FileNotFoundError:
-            print('Fichier introuvable.')
+                except FileNotFoundError:
+                    print('Fichier introuvable.')
 
     def open_level(self):
         try:

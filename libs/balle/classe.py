@@ -1,5 +1,4 @@
 from tkinter import *
-import json
 
 
 class Ball:
@@ -36,9 +35,12 @@ class Ball:
             self.dy = -1 * self.dy
         if self.Game.canevas.coords(self.ball)[3] > 600:
             self.Game.update_json_file()
-            self.static = True
             self.Game.life -= 1
             self.Game.canevas.itemconfigure(self.Game.lives_label, text="Lives : " + str(self.Game.life))
+            self.Game.root.unbind("<Button-1>") # empeche le spam click et donc de faire lag le programme
+            self.static = True #remet la balle en position initiale
+            self.dy = -1 * self.dy  #Permet de relancer la balle vers le haut pour le nouveau lancer au lieu part dans le paddle et lag
+
             if self.Game.life == 0:
                 self.Game.leave_loose_game()
             return 0
@@ -48,7 +50,7 @@ class Ball:
         if self.Game.canevas.coords(self.ball)[2] > 800:
             self.dx = -1 * self.dx
         self.Game.canevas.move(self.ball, self.dx, self.dy)
-        self.Game.root.after(20, self.animation)
+        self.Game.root.after(15, self.animation) #le premier parametre indique la vitesse de la balle, plus petit = plus rapide
 
         # collision paddle
         if len(self.Game.canevas.find_overlapping(self.Game.canevas.coords(self.Game.paddle.paddle)[0],
@@ -90,8 +92,5 @@ class Ball:
                 if len(self.Game.brick.bricks) == 0:
                     self.Game.update_json_file()
                     self.Game.leave_win_game()
-
-    def continue_game(self):
-        self.Game.leave_win_game()
 
 # Destroy the ball first !

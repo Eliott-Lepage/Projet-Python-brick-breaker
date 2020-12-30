@@ -100,10 +100,10 @@ class Game:
         self.score = 0
         self.life = 3
         self.canevas = Canvas(self.root, bg='light blue', highlightthickness=0)
-        self.create_score()
         self.paddle = Paddle(self)
         self.ball = Ball(self)
         self.brick = Brick(self)
+        self.create_score()
         self.window = Window
         self.end = False
         self.canevas.pack(fill=BOTH, expand=YES)
@@ -126,7 +126,6 @@ class Game:
         self.canevas.itemconfig(self.paddle.paddle, fill='grey')
         self.brick.next_level()
 
-
     def create_score(self):
         with open("data/save.txt", "r") as file:
             dictionary = json.load(file)
@@ -144,6 +143,10 @@ class Game:
         # Create the score in game
         self.score_label = self.canevas.create_text(0, 0, text="Score : " + str(self.score), font=("Arial", 15),
                                                     anchor=NW)
+
+        # Create the actual level in game
+        self.actual_level = self.canevas.create_text(400, 0, text="Level " + str(self.brick.counter),
+                                                     font=("Arial", 15), anchor=N)
 
         # Create label best score
         self.best_score_label = self.canevas.create_text(800, 0, text="Best Score : " + str(max_number),
@@ -216,6 +219,7 @@ class GameOver:
     def start_game(self):
         self.master.destroy()
         Game()
+
 
 class Victory:
     def __init__(self):

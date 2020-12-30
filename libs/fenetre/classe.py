@@ -3,6 +3,7 @@ from libs.balle.classe import Ball
 from libs.paddle.classe import Paddle
 from libs.brique.classe import Brick
 import json
+import time
 
 
 class Window:
@@ -50,7 +51,7 @@ class Window:
             with open("data/save.txt", "r") as file:
                 self.res = json.load(file)
                 self.res["Actual Username"] = str(name)
-                if not name.isalnum(): #Verifie si le nom de l'utilisateur n est pas vide
+                if not name.isalnum():  # Verifie si le nom de l'utilisateur n est pas vide ou si il contient des espaces
                     raise ValueError
                 if '' in self.res:
                     del self.res['']
@@ -98,12 +99,11 @@ class Game:
         self.root.config(background="#000000")
         self.score = 0
         self.life = 3
-        self.id_level = 0
         self.canevas = Canvas(self.root, bg='light blue', highlightthickness=0)
         self.create_score()
         self.paddle = Paddle(self)
         self.ball = Ball(self)
-        self.brick = Brick(self, self.id_level)
+        self.brick = Brick(self)
         self.window = Window
         self.end = False
         self.canevas.pack(fill=BOTH, expand=YES)
@@ -115,9 +115,16 @@ class Game:
 
     def leave_win_game(self):
         self.end = True
-        self.root.destroy()
-        self.brick.id_level += 1
-        Victory()
+        self.canevas.config(bg='black')
+        self.canevas.itemconfig(self.ball.ball, fill='black')
+        self.canevas.itemconfig(self.paddle.paddle, fill='black')
+        self.canevas.update()
+        time.sleep(2)
+        self.canevas.config(bg='light blue')
+        self.canevas.itemconfig(self.ball.ball, fill='red')
+        self.canevas.itemconfig(self.paddle.paddle, fill='grey')
+        self.brick.next_level()
+
 
     def create_score(self):
         with open("data/save.txt", "r") as file:
@@ -155,7 +162,7 @@ class Game:
             dictionary[user].append(self.score)
 
         with open("data/save.txt", "w") as file:
-            json.dump(dictionary, file)
+            json.dump(dictionary, file, indent=3, sort_keys=True)
 
 
 class GameOver:
@@ -208,7 +215,6 @@ class GameOver:
     def start_game(self):
         self.master.destroy()
         Game()
-
 
 class Victory:
     def __init__(self):

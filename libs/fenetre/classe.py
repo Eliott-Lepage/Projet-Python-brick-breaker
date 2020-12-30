@@ -109,6 +109,7 @@ class Game:
         self.canevas.pack(fill=BOTH, expand=YES)
 
     def leave_loose_game(self):
+        self.update_json_file()
         self.end = True
         self.root.destroy()
         GameOver()

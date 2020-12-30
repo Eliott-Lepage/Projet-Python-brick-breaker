@@ -102,6 +102,4 @@ class Ball:
                                              390 + 20, 480 + 20)
                     self.static = True
                     self.dy = -6
-                    self.Game.update_json_file()
                     self.Game.leave_win_game()
-

@@ -117,7 +117,7 @@ class Brick:
         with open("data/save.txt", "r") as file:
             res = json.load(file)
             for elem in list_files:
-                if str(self.counter) in elem:
+                if elem == "level_" + str(self.counter) + ".txt":
                     res["Actual Level"] = str(elem)
 
             with open("data/save.txt", "w") as file_write:

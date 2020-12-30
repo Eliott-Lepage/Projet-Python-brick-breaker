@@ -34,12 +34,11 @@ class Ball:
         if self.Game.canevas.coords(self.ball)[1] < 0:
             self.dy = -1 * self.dy
         if self.Game.canevas.coords(self.ball)[3] > 600:
-            self.Game.update_json_file()
             self.Game.life -= 1
             self.Game.canevas.itemconfigure(self.Game.lives_label, text="Lives : " + str(self.Game.life))
-            self.Game.root.unbind("<Button-1>") # empeche le spam click et donc de faire lag le programme
-            self.static = True #remet la balle en position initiale
-            self.dy = -1 * self.dy  #Permet de relancer la balle vers le haut pour le nouveau lancer au lieu part dans le paddle et lag
+            self.Game.root.unbind("<Button-1>")  # empeche le spam click et donc de faire lag le programme
+            self.static = True  # remet la balle en position initiale
+            self.dy = -1 * self.dy  # Permet de relancer la balle vers le haut pour le nouveau lancer au lieu part dans le paddle et lag
 
             if self.Game.life == 0:
                 self.Game.leave_loose_game()
@@ -50,7 +49,8 @@ class Ball:
         if self.Game.canevas.coords(self.ball)[2] > 800:
             self.dx = -1 * self.dx
         self.Game.canevas.move(self.ball, self.dx, self.dy)
-        self.Game.root.after(15, self.animation) #le premier parametre indique la vitesse de la balle, plus petit = plus rapide
+        animate = self.Game.root.after(15,
+                                       self.animation)  # le premier parametre indique la vitesse de la balle, plus petit = plus rapide
 
         # collision paddle
         if len(self.Game.canevas.find_overlapping(self.Game.canevas.coords(self.Game.paddle.paddle)[0],
@@ -73,7 +73,7 @@ class Ball:
 
                 # Change the color and solidity of the brick
                 color = self.Game.canevas.gettags(i)
-                if color == ('blue',):
+                if color == ('white',):
                     self.Game.brick.bricks.remove(i)
                     self.Game.canevas.delete(i)
                 elif color == ('pink',):
@@ -82,15 +82,29 @@ class Ball:
                                                     text="Lives : " + str(self.Game.life))
                     self.Game.brick.bricks.remove(i)
                     self.Game.canevas.delete(i)
+                elif color == ('yellow',):
+                    self.Game.canevas.itemconfig(i, fill='white', tag='white')
+                elif color == ('orange',):
+                    self.Game.canevas.itemconfig(i, fill='yellow', tag='yellow')
+                elif color == ('red',):
+                    self.Game.canevas.itemconfig(i, fill='orange', tag='orange')
+                elif color == ('#8757D5',):
+                    self.Game.canevas.itemconfig(i, fill='red', tag='red')
+                elif color == ('blue',):
+                    self.Game.canevas.itemconfig(i, fill='#8757D5', tag='#8757D5')
                 elif color == ('green',):
                     self.Game.canevas.itemconfig(i, fill='blue', tag='blue')
-                elif color == ('yellow',):
+                elif color == ('grey',):
                     self.Game.canevas.itemconfig(i, fill='green', tag='green')
-                elif color == ('red',):
-                    self.Game.canevas.itemconfig(i, fill='yellow', tag='yellow')
 
                 if len(self.Game.brick.bricks) == 0:
+                    self.Game.root.unbind("<Button-1>")  # empeche le spam click et donc de faire lag le programme
+                    self.Game.root.after_cancel(animate)
+                    self.Game.canevas.coords(self.Game.paddle.paddle, 370, 500, 370 + 60, 500 + 8)
+                    self.Game.canevas.coords(self.ball, 390, 480,
+                                             390 + 20, 480 + 20)
+                    self.static = True
+                    self.dy = -6
                     self.Game.update_json_file()
                     self.Game.leave_win_game()
 
-# Destroy the ball first !

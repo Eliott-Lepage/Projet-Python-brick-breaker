@@ -1,6 +1,3 @@
-from tkinter import *
-
-
 class Ball:
     def __init__(self, Game):
         self.dx = 2

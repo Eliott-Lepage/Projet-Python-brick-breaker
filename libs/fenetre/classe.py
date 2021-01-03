@@ -13,8 +13,9 @@ class Window:
        Date : November 2020
        This class is used to create a GUI and start the Game
     """
+
     def __init__(self):
-        """This builds a GUI
+        """This builds a GUI menu
 
                         PRE :
                             -
@@ -24,8 +25,6 @@ class Window:
                                 self.create_subtitle()
                                 self.create_play_button()
                                 self.create_quit_button()
-                        RAISES :
-                            -
         """
         self.window = Tk()
         self.window.title("Brick Breaker")
@@ -50,11 +49,25 @@ class Window:
         self.frame.pack(expand=YES, fill=BOTH, pady=200)
 
     def create_title(self):
+        """This builds a title label
+
+                        PRE :
+                            -
+                        POST :
+                            pack the title label
+        """
         label_title = Label(self.frame, text="Brick Breaker", font=("Arial", 40), bg='light blue',
                             fg='white')
         label_title.pack()
 
     def create_subtitle(self):
+        """This builds a subtitle label
+
+                                PRE :
+                                    -
+                                POST :
+                                    pack the subtitle label
+                """
         label_subtitle = Label(self.frame, text="Projet Python 2020", font=("Arial", 25), bg='light blue',
                                fg='white')
         label_subtitle.pack()
@@ -66,10 +79,8 @@ class Window:
                             -
                         POST :
                             call function my_click if user click on "Jouer" button
-
-                        RAISES :
-                            -
         """
+
         def my_click():
             """This builds button to launch the Game or leave it
 
@@ -84,24 +95,38 @@ class Window:
                                 ValueError if not name.isalnum()
                                 FileNotFoundError not save.txt in data
                                 IOError if not save.txt in data
+                                KeyError if not "Actual Username" in res
 
             """
             name = user_name.get(1.0, END).strip()
             self.res = {}
+            try:
+                with open("data/level.txt", "r") as file:
+                    self.res = json.load(file)
+                    if not "Actual Username" in self.res:
+                        raise KeyError("The Actual Username key is missing !")
+                    else:
+                        self.res["Actual Username"] = str(name)
+                        if not name.isalnum():  # Verifie si le nom de l'utilisateur n est pas vide ou si il contient des espaces
+                            raise ValueError
+                        if '' in self.res:
+                            del self.res['']
 
-            with open("data/save.txt", "r") as file:
-                self.res = json.load(file)
-                self.res["Actual Username"] = str(name)
-                if not name.isalnum():  # Verifie si le nom de l'utilisateur n est pas vide ou si il contient des espaces
-                    raise ValueError
-                if '' in self.res:
-                    del self.res['']
+                        if name not in self.res:
+                            self.res[str(name)] = [0]
 
-                if name not in self.res:
-                    self.res[str(name)] = [0]
+            except FileNotFoundError:
+                print('File not found !')
+            except IOError:
+                print('Error IO.')
 
+            try:
                 with open("data/save.txt", "w") as file_write:
                     json.dump(self.res, file_write)
+            except FileNotFoundError:
+                print('File not found !')
+            except IOError:
+                print('Error IO.')
 
         user_name = Text(self.littleFrame_bis, width=30, height=1, font=("Helvetica", 16))
         user_name.pack(pady=30, padx=30)
@@ -115,6 +140,13 @@ class Window:
         invisible_widget.grid(column=1, row=0)
 
     def create_quit_button(self):
+        """This create a button to quit the game
+
+                        PRE :
+                            -
+                        POST :
+                           create the leave button in a grid
+        """
         quit_button = Button(self.littleFrame, text="Quitter", font=("Arial", 25), bg='white', relief='groove',
                              fg='light blue',
                              command=self.leave_page, width=8, activebackground='red',
@@ -122,15 +154,45 @@ class Window:
         quit_button.grid(column=2, row=0)
 
     def leave_page(self):
+        """This destroy the menu window if player leaves the game
+
+                        PRE :
+                            -
+                        POST :
+                           destroy window
+        """
         self.window.destroy()
 
     def play_game(self):
+        """This destroy the menu window if player plays the game and create a new window with the loaded level
+
+                        PRE :
+                            -
+                        POST :
+                           destroy window
+                           call Game() class
+        """
         self.window.destroy()
         Game()
 
 
 class Game:
+    """Class representing the main window for the game.
+
+       Author : Mathis Dory, Eliott Lepage
+       Date : November 2020
+       This class is used to create a GUI with all needed elements
+    """
     def __init__(self):
+        """This builds a level interface
+
+                        PRE :
+                            -
+                        POST :
+                            create canvas to insert all elements in
+                            create ball, paddle and brick class
+                            call create_score() method
+        """
         self.root = Tk()
         self.root.title("Brick Breaker")
         self.root.geometry("800x600")
@@ -150,12 +212,30 @@ class Game:
         self.canevas.pack(fill=BOTH, expand=YES)
 
     def leave_loose_game(self):
+        """This destroy the window if user has no more lives
+
+                                PRE :
+                                    -
+                                POST :
+                                    call update_json_file() method
+                                    destroy root windows
+                                    call GameOver() class
+        """
         self.update_json_file()
         self.end = True
         self.root.destroy()
         GameOver()
 
     def leave_win_game(self):
+        """This update objects of the canvas if the player destroyed all the bricks in its current level
+
+                                PRE :
+                                    -
+                                POST :
+                                    sleep the program for 2 seconds
+                                    update canvas to create black screen
+                                    call self.brick.next_level method
+        """
         self.end = True
         self.canevas.config(bg='black')
         self.canevas.itemconfig(self.ball.ball, fill='black')
@@ -168,18 +248,40 @@ class Game:
         self.brick.next_level()
 
     def create_score(self):
-        with open("data/save.txt", "r") as file:
-            dictionary = json.load(file)
-            # Get the name of the actual user
-            user = dictionary["Actual Username"]
-            # Get the higher score of the user
+        """This create text widgets with username, current level, lives, current score and best score
 
-            max_number = 0
-            for elem in dictionary[user]:
-                if elem > max_number:
-                    max_number = elem
+                                PRE :
+                                    -
+                                POST :
+                                    save.txt exists in data folder
+                                    Actual Username is a key in save.txt
+
+                                RAISES :
+                                    KeyError if not "Actual Username" in dictionary
+                                    FileNotFoundError not save.txt in data
+                                    IOError if not save.txt in data
+        """
+        try:
+            with open("data/save.txt", "r") as file:
+
+                dictionary = json.load(file)
+                if not "Actual Username" in dictionary:
+                    raise KeyError("The Actual Username key is missing !")
                 else:
-                    continue
+                    # Get the name of the actual user
+                    user = dictionary["Actual Username"]
+                    # Get the higher score of the user
+
+                max_number = 0
+                for elem in dictionary[user]:
+                    if elem > max_number:
+                        max_number = elem
+                    else:
+                        continue
+        except FileNotFoundError:
+            print('File not found !')
+        except IOError:
+            print('Error IO.')
 
         # Create the score in game
         self.score_label = self.canevas.create_text(0, 0, text="Score : " + str(self.score), font=("Arial", 15),
@@ -201,17 +303,59 @@ class Game:
                                                     anchor=SE)
 
     def update_json_file(self):
-        with open("data/save.txt", "r+") as file:
-            dictionary = json.load(file)
-            user = dictionary["Actual Username"]
-            dictionary[user].append(self.score)
+        """This update the save.txt file with score when user has no more lives
 
-        with open("data/save.txt", "w") as file:
-            json.dump(dictionary, file, indent=3, sort_keys=True)
+                                PRE :
+                                    -
+                                POST :
+                                    save.txt exists in data folder
+                                    Actual Username is a key in save.txt
+
+                                RAISES :
+                                    KeyError if not "Actual Username" in dictionary
+                                    FileNotFoundError not save.txt in data
+                                    IOError if not save.txt in data
+        """
+        try:
+            with open("data/save.txt", "r+") as file:
+                dictionary = json.load(file)
+                if not "Actual Username" in dictionary:
+                    raise KeyError("The Actual Username key is missing !")
+                else:
+                    user = dictionary["Actual Username"]
+                    dictionary[user].append(self.score)
+        except FileNotFoundError:
+            print('File not found !')
+        except IOError:
+            print('Error IO.')
+
+        try:
+            with open("data/save.txt", "w") as file:
+                json.dump(dictionary, file, indent=3, sort_keys=True)
+        except FileNotFoundError:
+            print('File not found !')
+        except IOError:
+            print('Error IO.')
 
 
 class GameOver:
+    """Class representing a menu if the user has no more lives
+
+       Author : Mathis Dory, Eliott Lepage
+       Date : November 2020
+       This class is used to create a GUI with 2 buttons
+    """
     def __init__(self):
+        """This builds a GUI menu
+
+                        PRE :
+                            -
+                        POST :
+                            call
+                                self.create_title()
+                                self.create_play_button()
+                                self.create_quit_button()
+        """
         self.master = Tk()
         self.master.title("Brick Breaker")
         self.master.geometry("800x600")
@@ -222,23 +366,34 @@ class GameOver:
         self.littleFrame = Frame(self.frame, bg='lightblue')
 
         # creation des composants
-        self.create_widgets()
+        self.create_title()
+        self.create_play_button()
+        self.create_quit_button()
 
         # empaquetage
         self.littleFrame.pack(expand=YES, pady=100)
         self.frame.pack(expand=YES)
 
-    def create_widgets(self):
-        self.create_title()
-        self.create_play_button()
-        self.create_quit_button()
-
     def create_title(self):
+        """This builds a title label
+
+                        PRE :
+                            -
+                        POST :
+                            pack the title label
+        """
         label_title = Label(self.frame, text="Game Over", font=("Arial", 40), bg='lightblue',
                             fg='white')
         label_title.pack()
 
     def create_play_button(self):
+        """This create a button to restart the game
+
+                        PRE :
+                            -
+                        POST :
+                           create the restart button in a grid
+        """
         play_button = Button(self.littleFrame, text="Rejouer", font=("Arial", 25), bg='white', relief='groove',
                              fg='lightblue',
                              command=self.start_game, width=8, activebackground='white',
@@ -248,6 +403,13 @@ class GameOver:
         invisible_widget.grid(column=1, row=0)
 
     def create_quit_button(self):
+        """This create a button to quit the game
+
+                        PRE :
+                            -
+                        POST :
+                           create the leave button in a grid
+        """
         quit_button = Button(self.littleFrame, text="Quitter", font=("Arial", 25), bg='white', relief='groove',
                              fg='lightblue',
                              command=self.leave_page, width=8, activebackground='white',
@@ -255,9 +417,23 @@ class GameOver:
         quit_button.grid(column=2, row=0)
 
     def leave_page(self):
+        """destroy the master window
+
+                        PRE :
+                            -
+                        POST :
+                           destroy the master window
+        """
         self.master.destroy()
 
     def start_game(self):
+        """destroy the master window and restart the game
+
+                        PRE :
+                            -
+                        POST :
+                           destroy the master window
+                           call Game() class
+        """
         self.master.destroy()
         Game()
-

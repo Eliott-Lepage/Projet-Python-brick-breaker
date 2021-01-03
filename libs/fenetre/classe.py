@@ -112,9 +112,14 @@ class Window:
                 print('File not found !')
             except IOError:
                 print('Error IO.')
-
+            try:
                 with open("data/save.txt", "w") as file_write:
                     json.dump(self.res, file_write)
+
+            except FileNotFoundError:
+                print('File not found !')
+            except IOError:
+                print('Error IO.')
 
         user_name = Text(self.littleFrame_bis, width=30, height=1, font=("Helvetica", 16))
         user_name.pack(pady=30, padx=30)
@@ -171,6 +176,7 @@ class Game:
        Date : November 2020
        This class is used to create a GUI with all needed elements
     """
+
     def __init__(self):
         """This builds a level interface
 
@@ -320,6 +326,7 @@ class GameOver:
        Date : November 2020
        This class is used to create a GUI with 2 buttons
     """
+
     def __init__(self):
         """This builds a GUI menu
 

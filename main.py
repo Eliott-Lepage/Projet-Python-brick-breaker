@@ -14,8 +14,6 @@ Groupe 2TM1-2
 @:param argv[1] is used to determine the version of the game ( MVP or GUI )
 @:type string
 
-TEST
-
 '''
 
 __author__ = "Mathis Dory, Eliott Lepage"

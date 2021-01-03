@@ -56,16 +56,21 @@ class Brick:
             with open("data/save.txt", "r") as file:
                 res = json.load(file)
                 for elem in list_files:
+                    print(self.counter)
                     if elem == "level_" + str(self.counter) + ".txt":
                         res["Actual Level"] = str(elem)
         except FileNotFoundError:
-            print('Fichier introuvable.')
+            return 'File not found !'
+        except IOError:
+            return 'Error IO.'
 
         try:
             with open("data/save.txt", "w") as file_write:
                 json.dump(res, file_write, indent=3, sort_keys=True)
         except FileNotFoundError:
-            print('Fichier introuvable.')
+            return 'File not found !'
+        except IOError:
+            return 'Error IO.'
 
     def open_level_up(self):
         """
@@ -87,7 +92,9 @@ class Brick:
             with open("data/save.txt", "r") as file:
                 dictionary = json.load(file)
         except FileNotFoundError:
-            print('Fichier introuvable.')
+            return 'File not found !'
+        except IOError:
+            return 'Error IO.'
 
         try:
             with open('data/' + str(dictionary["Actual Level"]), "r") as file:
@@ -159,8 +166,14 @@ class Brick:
                     self.y += 50
                     self.x = 50
 
+
         except FileNotFoundError:
-            print('Fichier introuvable.')
+
+            return 'File not found !'
+
+        except IOError:
+
+            return 'Error IO.'
 
     def next_level(self):
         """

@@ -1,1 +1,4 @@
-{"Actual Username": ""}
+{
+   "Actual Level": "level_1.txt",
+   "Actual Username": ""
+}

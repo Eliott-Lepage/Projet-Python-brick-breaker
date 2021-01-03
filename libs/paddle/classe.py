@@ -9,7 +9,6 @@ class Paddle:
         """
         Creation of all the features of the paddle : width, height, movement speed
         Bind <motion> for the object paddle : it moves when the user moves the mouse
-
         PRE:
             Game class is running
         POST:
@@ -26,7 +25,6 @@ class Paddle:
     def motion(self, event):
         """
         This function changes the coordinates of the paddle when the user moves the mouse and launch the ball
-
         PRE : event is the action of moving the paddle from right to left
         POST :
             - It modifies the coordinates of the paddle

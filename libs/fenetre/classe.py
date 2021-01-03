@@ -74,59 +74,47 @@ class Window:
 
     def create_play_button(self):
         """This builds button to launch the Game or leave it
-
-                        PRE :
-                            -
-                        POST :
-                            call function my_click if user click on "Jouer" button
-        """
+                                PRE :
+                                    -
+                                POST :
+                                    call function my_click if user click on "Jouer" button
+                                RAISES :
+                                    -
+                """
 
         def my_click():
             """This builds button to launch the Game or leave it
+                            PRE : -
 
-                            PRE :
-                                -
                             POST :
                                 save.txt exists in data folder
                                 Actual Username is a key in save.txt
                                 name.isalnum() == True
-
                             RAISES :
                                 ValueError if not name.isalnum()
                                 FileNotFoundError not save.txt in data
                                 IOError if not save.txt in data
-                                KeyError if not "Actual Username" in res
-
             """
             name = user_name.get(1.0, END).strip()
             self.res = {}
             try:
-                with open("data/level.txt", "r") as file:
+                with open("data/save.txt", "r") as file:
                     self.res = json.load(file)
-                    if not "Actual Username" in self.res:
-                        raise KeyError("The Actual Username key is missing !")
-                    else:
-                        self.res["Actual Username"] = str(name)
-                        if not name.isalnum():  # Verifie si le nom de l'utilisateur n est pas vide ou si il contient des espaces
-                            raise ValueError
-                        if '' in self.res:
-                            del self.res['']
+                    self.res["Actual Username"] = str(name)
+                    if not name.isalnum():
+                        raise ValueError
+                    if '' in self.res:
+                        del self.res['']
 
-                        if name not in self.res:
-                            self.res[str(name)] = [0]
-
+                    if name not in self.res:
+                        self.res[str(name)] = [0]
             except FileNotFoundError:
                 print('File not found !')
             except IOError:
                 print('Error IO.')
 
-            try:
                 with open("data/save.txt", "w") as file_write:
                     json.dump(self.res, file_write)
-            except FileNotFoundError:
-                print('File not found !')
-            except IOError:
-                print('Error IO.')
 
         user_name = Text(self.littleFrame_bis, width=30, height=1, font=("Helvetica", 16))
         user_name.pack(pady=30, padx=30)
@@ -316,26 +304,13 @@ class Game:
                                     FileNotFoundError not save.txt in data
                                     IOError if not save.txt in data
         """
-        try:
-            with open("data/save.txt", "r+") as file:
-                dictionary = json.load(file)
-                if not "Actual Username" in dictionary:
-                    raise KeyError("The Actual Username key is missing !")
-                else:
-                    user = dictionary["Actual Username"]
-                    dictionary[user].append(self.score)
-        except FileNotFoundError:
-            print('File not found !')
-        except IOError:
-            print('Error IO.')
+        with open("data/save.txt", "r+") as file:
+            dictionary = json.load(file)
+            user = dictionary["Actual Username"]
+            dictionary[user].append(self.score)
 
-        try:
-            with open("data/save.txt", "w") as file:
-                json.dump(dictionary, file, indent=3, sort_keys=True)
-        except FileNotFoundError:
-            print('File not found !')
-        except IOError:
-            print('Error IO.')
+        with open("data/save.txt", "w") as file:
+            json.dump(dictionary, file, indent=3, sort_keys=True)
 
 
 class GameOver:

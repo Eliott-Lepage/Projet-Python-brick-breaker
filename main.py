@@ -27,8 +27,9 @@ if __name__ == '__main__':
             gui = Window()
             gui.window.mainloop()
         elif sys.argv[1] == "console":
-            display_console()
+            display_console('data/level.txt')
         else:
             print("Introduisez console pour lancer en mode MVP\nIntroduisez GUI pour lancer en GUI")
     else:
         print("Le programme nécessite 1 paramètre: console ou GUI !")
+

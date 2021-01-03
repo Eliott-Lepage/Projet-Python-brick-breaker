@@ -1,4 +1,4 @@
-def display_console():
+def display_console(fichier):
     """This print the content of the level.txt file. This function is used for MVP demonstration, you have to enter a
     position for the ball until all the x are removed.
 
@@ -18,7 +18,7 @@ def display_console():
 
     """
     try:
-        with open('data/level.txt', "r") as file:
+        with open(fichier, "r") as file:
             list_ball = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
             list_of_lists = []
 
@@ -84,6 +84,6 @@ def display_console():
                     print("Please enter a number between 1 and 13 inclusive!")
                     break
     except FileNotFoundError:
-        print('File not found !')
+        return 'File not found !'
     except IOError:
-        print('Error IO.')
+        return 'Error IO.'

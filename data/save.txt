@@ -1,4 +1,10 @@
 {
-   "Actual Level": "level_1.txt",
-   "Actual Username": ""
+   "Actual Level": "level_01.txt",
+   "Actual Username": "ldz",
+   "dzgzg": [
+      0
+   ],
+   "ldz": [
+      0
+   ]
 }

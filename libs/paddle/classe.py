@@ -1,9 +1,9 @@
 from tkinter import *
 
 
-class Paddle():
-    def __init__(self, Game):
-        self.Game = Game
+class Paddle:
+    def __init__(self, game):
+        self.Game = game
         self.dx = 1
         self.paddle = self.Game.canevas.create_rectangle(370, 500, 370 + 60, 500 + 8, fill='grey')
         self.Game.root.bind("<Motion>", self.motion)

@@ -7,7 +7,26 @@ import time
 
 
 class Window:
+    """Class representing a menu for the Game
+
+       Author : Mathis Dory, Eliott Lepage
+       Date : November 2020
+       This class is used to create a GUI and start the Game
+    """
     def __init__(self):
+        """This builds a GUI
+
+                        PRE :
+                            -
+                        POST :
+                            call
+                                self.create_title()
+                                self.create_subtitle()
+                                self.create_play_button()
+                                self.create_quit_button()
+                        RAISES :
+                            -
+        """
         self.window = Tk()
         self.window.title("Brick Breaker")
         self.window.attributes("-fullscreen", True)
@@ -20,18 +39,15 @@ class Window:
         self.littleFrame_bis = LabelFrame(self.frame, bg='light blue', text="USER NAME")
 
         # creation des composants
-        self.create_widgets()
+        self.create_title()
+        self.create_subtitle()
+        self.create_play_button()
+        self.create_quit_button()
 
         # empaquetage
         self.littleFrame_bis.pack(expand=YES, pady=30)
         self.littleFrame.pack(expand=YES, pady=50)
         self.frame.pack(expand=YES, fill=BOTH, pady=200)
-
-    def create_widgets(self):
-        self.create_title()
-        self.create_subtitle()
-        self.create_play_button()
-        self.create_quit_button()
 
     def create_title(self):
         label_title = Label(self.frame, text="Brick Breaker", font=("Arial", 40), bg='light blue',
@@ -44,7 +60,32 @@ class Window:
         label_subtitle.pack()
 
     def create_play_button(self):
+        """This builds button to launch the Game or leave it
+
+                        PRE :
+                            -
+                        POST :
+                            call function my_click if user click on "Jouer" button
+
+                        RAISES :
+                            -
+        """
         def my_click():
+            """This builds button to launch the Game or leave it
+
+                            PRE :
+                                -
+                            POST :
+                                save.txt exists in data folder
+                                Actual Username is a key in save.txt
+                                name.isalnum() == True
+
+                            RAISES :
+                                ValueError if not name.isalnum()
+                                FileNotFoundError not save.txt in data
+                                IOError if not save.txt in data
+
+            """
             name = user_name.get(1.0, END).strip()
             self.res = {}
 
@@ -220,54 +261,3 @@ class GameOver:
         self.master.destroy()
         Game()
 
-
-class Victory:
-    def __init__(self):
-        self.master = Tk()
-        self.master.title("Brick Breaker")
-        self.master.geometry("800x600")
-        self.master.minsize(800, 600)
-        self.master.iconbitmap("data/wall.ico")
-        self.master.config(background="lightblue")
-        self.frame = Frame(self.master, bg='lightblue')
-        self.littleFrame = Frame(self.frame, bg='lightblue')
-
-        # creation des composants
-        self.create_widgets()
-
-        # empaquetage
-        self.littleFrame.pack(expand=YES, pady=100)
-        self.frame.pack(expand=YES)
-
-    def create_widgets(self):
-        self.create_title()
-        self.create_play_button()
-        self.create_quit_button()
-
-    def create_title(self):
-        label_title = Label(self.frame, text="Victoire !", font=("Arial", 40), bg='lightblue',
-                            fg='white')
-        label_title.pack()
-
-    def create_play_button(self):
-        play_button = Button(self.littleFrame, text="Rejouer", font=("Arial", 25), bg='white', relief='groove',
-                             fg='lightblue',
-                             command=self.start_game, width=8, activebackground='white',
-                             activeforeground='lightblue')
-        play_button.grid(column=0, row=0)
-        invisible_widget = Label(self.littleFrame, text=" ", bg="lightblue")
-        invisible_widget.grid(column=1, row=0)
-
-    def create_quit_button(self):
-        quit_button = Button(self.littleFrame, text="Quitter", font=("Arial", 25), bg='white', relief='groove',
-                             fg='lightblue',
-                             command=self.leave_game, width=8, activebackground='white',
-                             activeforeground='lightblue')
-        quit_button.grid(column=2, row=0)
-
-    def leave_game(self):
-        self.master.destroy()
-
-    def start_game(self):
-        self.master.destroy()
-        Game()

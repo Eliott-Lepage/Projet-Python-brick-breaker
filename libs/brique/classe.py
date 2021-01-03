@@ -5,7 +5,7 @@ import json
 
 class Brick:
 
-    def __init__(self, Game):
+    def __init__(self, game):
         self.x = 50
         self.y = 50
         self.number_max = 56
@@ -13,18 +13,17 @@ class Brick:
         self.height = None
         self.colors = None
         self.bricks = []
-        self.Game = Game
+        self.Game = game
         self.levels = []
         self.counter = 1
 
         # self.create_all_bricks()
-        # self.open_level()
         self.get_files()
         self.open_level_up()
 
     def create_all_bricks(self):
         for x in range(self.number_max):
-            self.brick = self.Game.canevas.create_rectangle(self.x, self.y, self.x + 45, self.y + 25, fill='yellow')
+            self.Game.canevas.create_rectangle(self.x, self.y, self.x + 45, self.y + 25, fill='yellow')
             self.x += 50
 
             if x == 12 + 1:
@@ -38,74 +37,6 @@ class Brick:
             if x == 38 + 3:
                 self.x = 50
                 self.y = 200
-
-    def display_console(self):
-        try:
-            with open('data/level.txt', "r") as file:
-                list_ball = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
-                list_of_lists = []
-
-                # Main display
-                for line in file:
-                    stripped_line = line.strip()
-                    line_list = stripped_line.split()
-                    list_of_lists.append(line_list)
-
-                end = False
-                while end is not True:
-
-                    # Place the ball at the index indicated by the user
-                    response = input("Quelle position attribuez vous à la balle ?  ")
-                    # Checks if the user enters a number between 1 and 13
-                    if 13 >= int(response) > 0:
-                        end = False
-                        touch = False
-                        list_ball[int(response) - 1] = "*"
-                        index_ball = list_ball.index("*")
-                        while not end:
-                            if str(list_of_lists[3][index_ball]) == "x":
-                                list_of_lists[3][index_ball] = "-"
-                                touch = True
-
-                            if str(list_of_lists[2][index_ball]) == "x":
-                                if not touch:
-                                    list_of_lists[2][index_ball] = "-"
-                                    touch = True
-
-                            if str(list_of_lists[1][index_ball]) == "x":
-                                if not touch:
-                                    list_of_lists[1][index_ball] = "-"
-                                    touch = True
-
-                            if str(list_of_lists[0][index_ball]) == "x":
-                                if not touch:
-                                    list_of_lists[0][index_ball] = "-"
-                                    touch = True
-                            end = True
-
-                        print(' '.join(map(str, list_of_lists[0])))
-                        print(' '.join(map(str, list_of_lists[1])))
-                        print(' '.join(map(str, list_of_lists[2])))
-                        print(' '.join(map(str, list_of_lists[3])))
-
-                        print(' '.join(map(str, list_ball)))
-                        list_ball[int(response) - 1] = ' '
-                        print("\n")
-
-                        for elem in list_of_lists:
-                            if 'x' in elem:
-                                end = False
-                            else:
-                                end = True
-                        if end:
-                            print("END")
-                    else:
-                        print("Please enter a number between 1 and 13 inclusive!")
-                        break
-        except FileNotFoundError:
-            print('File not found !')
-        except IOError:
-            print('Error IO.')
 
     def get_files(self):
         list_files = list()
@@ -236,6 +167,7 @@ class Brick:
 
     def next_level(self):
         self.counter += 1
+        self.Game.canevas.itemconfigure(self.Game.actual_level, text="Level " + str(self.counter))
         self.x = 50
         self.y = 50
         self.get_files()

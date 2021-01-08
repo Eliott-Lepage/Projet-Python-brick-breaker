@@ -1,39 +1,4 @@
 {
-   "Actual Level": "level_2.txt",
-   "Actual Username": "jean",
-   "Basile": [
-      0,
-      2100,
-      2700
-   ],
-   "dzgzg": [
-      0
-   ],
-   "eliott": [
-      0
-   ],
-   "jean": [
-      0
-   ],
-   "ldz": [
-      0
-   ],
-   "lq": [
-      0
-   ],
-   "lz": [
-      0
-   ],
-   "m": [
-      0
-   ],
-   "n": [
-      0
-   ],
-   "s": [
-      0
-   ],
-   "z": [
-      0
-   ]
+   "Actual Level": "level_1.txt",
+   "Actual Username": ""
 }

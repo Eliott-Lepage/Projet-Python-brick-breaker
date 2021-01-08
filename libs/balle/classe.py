@@ -1,3 +1,6 @@
+from libs.balle.fonctions import set_increment_score, calcul_target
+
+
 class Ball:
     """Class representing a ball
 
@@ -5,6 +8,7 @@ class Ball:
        Date : November 2020
        This class is used to create an animate ball
     """
+
     def __init__(self, game):
         """This builds a ball and bind right click to launch the ball.
 
@@ -16,6 +20,14 @@ class Ball:
                     -
         """
         self.dx = 2
+        self.all_colors_tranformation = {"yellow": "white",
+                                         "orange": "yellow",
+                                         "red": "orange",
+                                         "#8757D5": "red",
+                                         "blue": "#8757D5",
+                                         "green": "blue",
+                                         "grey": "green"
+                                         }
         self.dy = -6
         self.Game = game
         self.static = True
@@ -45,6 +57,10 @@ class Ball:
             self.static = False
             self.Game.canevas.pack()
 
+    def set_new_color(self, color, brick):
+        new_color = self.all_colors_tranformation[color]
+        self.Game.canevas.itemconfig(brick, fill=new_color, tag=new_color)
+
     def animation(self):
         """Give movement to the ball and modify score, lifes and bricks.
 
@@ -71,9 +87,9 @@ class Ball:
             return 0
 
         if self.Game.canevas.coords(self.ball)[0] < 0:
-            self.dx = -1 * self.dx
+            self.dx = calcul_target(self.dx)
         if self.Game.canevas.coords(self.ball)[2] > 800:
-            self.dx = -1 * self.dx
+            self.dx = calcul_target(self.dx)
         self.Game.canevas.move(self.ball, self.dx, self.dy)
         animate = self.Game.root.after(15,
                                        self.animation)  # le premier parametre indique la vitesse de la balle,
@@ -95,7 +111,7 @@ class Ball:
                 self.Game.ball.dy = -1 * self.Game.ball.dy
 
                 # Score
-                self.Game.score += 100
+                self.Game.score += set_increment_score(self.Game.score)
                 self.Game.canevas.itemconfigure(self.Game.score_label, text="Score : " + str(self.Game.score))
 
                 # Change the color and solidity of the brick
@@ -109,20 +125,8 @@ class Ball:
                                                     text="Lives : " + str(self.Game.life))
                     self.Game.brick.bricks.remove(i)
                     self.Game.canevas.delete(i)
-                elif color == ('yellow',):
-                    self.Game.canevas.itemconfig(i, fill='white', tag='white')
-                elif color == ('orange',):
-                    self.Game.canevas.itemconfig(i, fill='yellow', tag='yellow')
-                elif color == ('red',):
-                    self.Game.canevas.itemconfig(i, fill='orange', tag='orange')
-                elif color == ('#8757D5',):
-                    self.Game.canevas.itemconfig(i, fill='red', tag='red')
-                elif color == ('blue',):
-                    self.Game.canevas.itemconfig(i, fill='#8757D5', tag='#8757D5')
-                elif color == ('green',):
-                    self.Game.canevas.itemconfig(i, fill='blue', tag='blue')
-                elif color == ('grey',):
-                    self.Game.canevas.itemconfig(i, fill='green', tag='green')
+                else:
+                    self.set_new_color(color[0], i)
 
                 if len(self.Game.brick.bricks) == 0:
                     self.Game.root.unbind("<Button-1>")  # empeche le spam click et donc de faire lag le programme

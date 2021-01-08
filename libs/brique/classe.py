@@ -2,6 +2,8 @@ from os import listdir
 from os.path import isfile, join
 import json
 
+from libs.brique.fonction import set_next_level
+
 
 class Brick:
     """Class representing the bricks
@@ -186,9 +188,11 @@ class Brick:
             - Call the functions self.get_files() and self.open_level_up()
 
         """
-        self.counter += 1
+        temp_data = set_next_level(self.counter)
+        self.counter = temp_data[0]
         self.Game.canevas.itemconfigure(self.Game.actual_level, text="Level " + str(self.counter))
-        self.x = 50
-        self.y = 50
+        self.x = temp_data[1]
+        self.y = temp_data[2]
         self.get_files()
         self.open_level_up()
+
